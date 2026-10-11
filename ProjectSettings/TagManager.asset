@@ -38,6 +38,21 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BKG
+    uniqueID: 3809242259
+    locked: 0
+  - name: Back
+    uniqueID: 279192813
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Front
+    uniqueID: 3084646355
+    locked: 0
+  - name: Front Pages
+    uniqueID: 4246833091
+    locked: 0
+  - name: FORE
+    uniqueID: 934426271
     locked: 0
