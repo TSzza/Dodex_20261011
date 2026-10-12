@@ -15,7 +15,8 @@ public class Cursor_Sender : MonoBehaviour,
     public enum HoverCursorBehavior
     {
         NormalButton,
-        ResizeHandle
+        ResizeHandle,
+        PageHover,
     }
 
     [Header("光标行为模式")]
@@ -56,6 +57,11 @@ public class Cursor_Sender : MonoBehaviour,
         {
             //普通按钮按下切换pin
             Cursor_Manager.Instance.SetCursorType(CursorType.pin);
+        }
+        else if (behavior == HoverCursorBehavior.PageHover)
+        {
+            CanvasLayer_Manager.CanvasType myType = GetComponent<DefaultPage_Manager>().myType;
+            CanvasLayer_Manager.Instance.Open(myType);
         }
         // ResizeHandle：按下不变化，保持原有resizeCursor
     }

@@ -13,6 +13,9 @@ public class Root : MonoBehaviour
     public Data_Controller data_Controller;
     public Audio_Controller audio_Controller;
 
+    [HideInInspector]
+    public float MouseMult = 0.4f; // 由于1920*1080变成了 192*4的宽，变成了0.4倍
+
      
     public static Root Instance { get; private set; }
     private void Awake()
@@ -23,7 +26,7 @@ public class Root : MonoBehaviour
             return;
         }
         Instance = this;
-        Debug.Log("Root Instance 初始化");
+        Debug.Log($"Root Instance 初始化 MouseMult {MouseMult}");
     }
 
 	private void Start() // 在此处触发各大系统的初始化

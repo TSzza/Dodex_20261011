@@ -5,6 +5,12 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RectTransform))]
 public class DefaultPage_Manager : MonoBehaviour
 {
+    public CanvasLayer_Manager.CanvasType myType;
+    [HideInInspector]
+    public Vector3 OriPos;
+    [HideInInspector]
+    public float OriWidth, OriHeight;
+
     [Header("引用")]
     public RectTransform windowRect;
     //public DefaultPage_Manager pageManager;
@@ -12,12 +18,15 @@ public class DefaultPage_Manager : MonoBehaviour
     [Header("窗口尺寸限制")]
     public float minWidth = 200f;
     public float minHeight = 150f;
-    public float maxWidth = 1200f;
-    public float maxHeight = 800f;
+    private float maxWidth;
+    private float maxHeight;
 
     [Header("窗口位置边界（比例）")]
     public float ResizeScreenMargin = 0.05f; // 离屏幕边缘最小距离
     public float DragScreenMargin = 0.2f; // 离屏幕边缘最小距离
+    
+    [HideInInspector]
+    public bool isMaximized = false;
 
     private bool isDraggingWindow;
     private Vector2 dragStartMousePos;
@@ -29,7 +38,7 @@ public class DefaultPage_Manager : MonoBehaviour
     private Vector2 resizeStartWindowSize;
     private Vector2 resizeStartWindowAnchoredPos;
 
-    public float mouseMult = 0.5f;
+    private float mouseMult;
 
     public enum ResizeDirection
     {
@@ -40,14 +49,28 @@ public class DefaultPage_Manager : MonoBehaviour
     void Awake()
     {
         if (windowRect == null) windowRect = GetComponent<RectTransform>();
-    }
 
-    #region 整体窗口拖动
-    public void StartDragWindow()
+        if (windowRect == null) return;
+        OriPos = windowRect.anchoredPosition3D;
+        OriWidth = windowRect.sizeDelta.x;
+        OriHeight = windowRect.sizeDelta.y;
+    }
+	private void Start() // 设置最大值为最大化
+	{
+        maxWidth = CanvasLayer_Manager.Instance.maximizeSize.x - 1;
+        maxHeight = CanvasLayer_Manager.Instance.maximizeSize.y - 1;
+
+        mouseMult = Root.Instance.MouseMult;
+	}
+
+	#region 整体窗口拖动
+	public void StartDragWindow()
     {
         isDraggingWindow = true;
         dragStartMousePos = Input.mousePosition;
         dragStartWindowAnchoredPos = windowRect.anchoredPosition;
+
+        isMaximized = false;
     }
 
     public void StopDragWindow()
@@ -67,6 +90,8 @@ public class DefaultPage_Manager : MonoBehaviour
         resizeStartMousePos = Input.mousePosition;
         resizeStartWindowSize = windowRect.sizeDelta;
         resizeStartWindowAnchoredPos = windowRect.anchoredPosition;
+
+        isMaximized = false;
     }
 
     public void StopResize()
