@@ -7,7 +7,8 @@ public class DefaultPage_button : MonoBehaviour
         MinimizeIcon,
         MaximizeIcon,
         CloseIcon,
-        OpenIcon
+        OpenIcon,
+        Open_MinimizeIcon,
     }
 
     [Header("按钮图标种类")]
@@ -67,6 +68,23 @@ public class DefaultPage_button : MonoBehaviour
             case ButtonIconKind.OpenIcon:
                 CanvasLayer_Manager.Instance.Open(type);
                 break;
+            case ButtonIconKind.Open_MinimizeIcon:
+                {
+                    DefaultPage_Manager targetPage = CanvasLayer_Manager.Instance.GetPageManagerByType(type);
+                    if (targetPage != null)
+                    {
+                        if (targetPage.isMinimized)
+                        {
+                            // 已最小化，打开它
+                            CanvasLayer_Manager.Instance.Open(type);
+                        }
+                        else
+                        {
+                            CanvasLayer_Manager.Instance.Minimize(type);
+                        }
+                    }
+                    break;
+                }
         }
     }
 

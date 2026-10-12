@@ -27,6 +27,8 @@ public class DefaultPage_Manager : MonoBehaviour
     
     [HideInInspector]
     public bool isMaximized = false;
+    [HideInInspector]
+    public bool isMinimized = false;
 
     private bool isDraggingWindow;
     private Vector2 dragStartMousePos;

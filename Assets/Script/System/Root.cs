@@ -12,9 +12,11 @@ public class Root : MonoBehaviour
     public System_Controller system_Controller;
     public Data_Controller data_Controller;
     public Audio_Controller audio_Controller;
-
+    
     [HideInInspector]
     public float MouseMult = 0.4f; // 由于1920*1080变成了 192*4的宽，变成了0.4倍
+    [HideInInspector]
+    public float DelaySet = 0f; // 玩家调试的声音延迟，需要存档
 
      
     public static Root Instance { get; private set; }
@@ -27,12 +29,13 @@ public class Root : MonoBehaviour
         }
         Instance = this;
         Debug.Log($"Root Instance 初始化 MouseMult {MouseMult}");
-    }
 
-	private void Start() // 在此处触发各大系统的初始化
-	{
+        // 在此处触发各大系统的初始化
+
         data_Controller.Init_Data();
-	}
+
+
+    }
 
     private void OnApplicationQuit() // 退出时存档
     {

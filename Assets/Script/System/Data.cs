@@ -25,6 +25,8 @@ namespace Data
         public int screenWidth;
         public int screenHeight;
         public bool fullScreen;
+
+        public float delaySet;
     }
 
 

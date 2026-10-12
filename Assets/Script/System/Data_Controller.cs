@@ -41,6 +41,7 @@ public class Data_Controller : MonoBehaviour
             Res.x = data.screenWidth;
             Res.y = data.screenHeight;
             Full = data.fullScreen;
+            Root.Instance.DelaySet = data.delaySet;
         }
         sys.SetResolution(Res.x, Res.y);
         sys.SetFullScreen(Full);
@@ -51,7 +52,8 @@ public class Data_Controller : MonoBehaviour
         {
             screenWidth = Screen.width,
             screenHeight = Screen.height,
-            fullScreen = (Screen.fullScreenMode != FullScreenMode.Windowed)
+            fullScreen = (Screen.fullScreenMode != FullScreenMode.Windowed),
+            delaySet = Root.Instance.DelaySet,
         };
         string json = JsonUtility.ToJson(data, prettyPrint: true);
         File.WriteAllText(SavePath, json, Encoding.UTF8);

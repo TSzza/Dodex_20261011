@@ -99,6 +99,8 @@ public class CanvasLayer_Manager : MonoBehaviour
             item.BigButton.SetActive(true);
         if (item.SmallButton != null)
             item.SmallButton.SetActive(false);
+        
+        item.canvas.GetComponent<DefaultPage_Manager>().isMinimized = false;
     }
 
     /// <summary>
@@ -116,6 +118,8 @@ public class CanvasLayer_Manager : MonoBehaviour
             item.BigButton.SetActive(true);
         if (item.SmallButton != null)
             item.SmallButton.SetActive(false);
+
+        item.canvas.GetComponent<DefaultPage_Manager>().isMinimized = true; // 通知其为最小化
     }
 
     /// <summary>
@@ -133,6 +137,8 @@ public class CanvasLayer_Manager : MonoBehaviour
             item.BigButton.SetActive(false);
         if (item.SmallButton != null)
             item.SmallButton.SetActive(true);
+        
+        item.canvas.GetComponent<DefaultPage_Manager>().isMinimized = false;
     }
 
     /// <summary>
@@ -148,7 +154,8 @@ public class CanvasLayer_Manager : MonoBehaviour
 
         rt.anchoredPosition3D = maximizePos;
         rt.sizeDelta = maximizeSize;
-
+        
+        item.canvas.GetComponent<DefaultPage_Manager>().isMinimized = false;
         item.canvas.GetComponent<DefaultPage_Manager>().isMaximized = true; // 通知其为最大化
     }
 
@@ -172,8 +179,9 @@ public class CanvasLayer_Manager : MonoBehaviour
 
         rt.anchoredPosition3D = pageManager.OriPos;
         rt.sizeDelta = new Vector2(pageManager.OriWidth, pageManager.OriHeight);
-
-        item.canvas.GetComponent<DefaultPage_Manager>().isMaximized = false; // 通知
+        
+        item.canvas.GetComponent<DefaultPage_Manager>().isMinimized = false;
+        item.canvas.GetComponent<DefaultPage_Manager>().isMaximized = false; // 通知最大化撤销，最大化会跨开关窗口保存
     }
     
     // 根据类型获取DefaultPage_Manager，给Maximize按钮调用
