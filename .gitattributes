@@ -1,0 +1,67 @@
+# ============================================================================
+#  Dodex — Unity 2022.3.62f2c1 协作规范（.gitattributes）
+#
+#  两个目的：
+#   1) 场景 / Prefab / 材质等 Unity YAML 资源发生冲突时，走 UnityYAMLMerge
+#      做三方合并，而不是丢给队友手工对齐 GUID 和 m_Lines。
+#   2) 大体积二进制（本项目 Assets/Fonts 下有 6 个 33MB 的 TMP 字体图集）
+#      禁止文本 diff / 合并，否则一旦两边都打开过工程，文件会被写坏。
+#
+#  本文件需要 commit + push 才会对队友生效。
+#  另外每人还要在本机配一次 merge driver —— 见文件末尾注释。
+# ============================================================================
+
+# ---------- 兜底：由 git 自动判定文本性，行尾统一 LF ----------
+* text=auto eol=lf
+
+# ---------- Unity YAML 资源：允许自动三方合并 ----------
+*.unity               merge=unityyamlmerge eol=lf
+*.prefab              merge=unityyamlmerge eol=lf
+*.controller          merge=unityyamlmerge eol=lf
+*.overrideController  merge=unityyamlmerge eol=lf
+*.anim                merge=unityyamlmerge eol=lf
+*.mat                 merge=unityyamlmerge eol=lf
+*.asset               merge=unityyamlmerge eol=lf
+*.meta                merge=unityyamlmerge eol=lf
+
+# ---------- 字体目录整体按二进制处理 ----------
+# 注意：Assets/Fonts 下有 "Font Chi Pixel/BoutiqueBitmap9x9_Bold_1.9 SDF.asset"
+# 这类文件名本身含空格。.gitattributes 里 **模式中的空格是分隔符**，
+# 所以绝不能写成 "... SDF.asset"——那样会把所有文件都标成 binary。
+# 这里用目录级通配（* 天然能匹配空格），一劳永逸。
+Assets/Fonts/**       binary
+
+# ---------- 其他二进制资产 ----------
+*.scenetemplate       binary
+*.png                 binary
+*.jpg                 binary
+*.jpeg                binary
+*.psd                 binary
+*.tga                 binary
+*.exr                 binary
+*.fbx                 binary
+*.wav                 binary
+*.mp3                 binary
+*.ogg                 binary
+*.dll                 binary
+*.so                  binary
+*.a                   binary
+*.bundle              binary
+
+# ---------- C# 用 C# 的 diff 规则（更好看的逐行差异）----------
+*.cs                  diff=csharp
+
+# ============================================================================
+#  每人本机配一次 SmartMerge driver（不进版本库，各机器路径不同）
+#
+#  UnityYAMLMerge 就装在编辑器里：
+#    F:/unity/2022.3.62f2c1/Editor/Data/Tools/UnityYAMLMerge.exe
+#
+#  在仓库根目录执行：
+#    git config merge.unityyamlmerge.name "Unity SmartMerge"
+#    git config merge.unityyamlmerge.driver '"F:/unity/2022.3.62f2c1/Editor/Data/Tools/UnityYAMLMerge.exe" merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"'
+#    git config merge.unityyamlmerge.recursive binary
+#
+#  把 --local 换成 --global 可对所有 Unity 工程生效。
+#  装在其他盘 / 其他版本时，只改上面那条路径即可。
+# ============================================================================
