@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[SelectionBase]
 [RequireComponent(typeof(RectTransform))]
 public class DefaultPage_Manager : MonoBehaviour
 {
@@ -40,8 +41,6 @@ public class DefaultPage_Manager : MonoBehaviour
     private Vector2 resizeStartWindowSize;
     private Vector2 resizeStartWindowAnchoredPos;
 
-    private float mouseMult;
-
     public enum ResizeDirection
     {
         Drag, Left, Right, Top, Bottom,
@@ -61,8 +60,6 @@ public class DefaultPage_Manager : MonoBehaviour
 	{
         maxWidth = CanvasLayer_Manager.Instance.maximizeSize.x - 1;
         maxHeight = CanvasLayer_Manager.Instance.maximizeSize.y - 1;
-
-        mouseMult = Root.Instance.MouseMult;
 	}
 
 	#region 整体窗口拖动
@@ -124,7 +121,7 @@ public class DefaultPage_Manager : MonoBehaviour
         mousePos.x = Mathf.Clamp(mousePos.x, Screen.width * DragScreenMargin, Screen.width * (1f - DragScreenMargin));
         mousePos.y = Mathf.Clamp(mousePos.y, Screen.height * DragScreenMargin, Screen.height * (1f - DragScreenMargin));
         Vector2 mouseDelta = mousePos - dragStartMousePos;
-        mouseDelta *= mouseMult;
+        mouseDelta *= Root.Instance.MouseMult;
         Vector2 newAnchoredPos = dragStartWindowAnchoredPos + mouseDelta;
 
         windowRect.anchoredPosition = newAnchoredPos;
@@ -137,7 +134,7 @@ public class DefaultPage_Manager : MonoBehaviour
         mousePos.x = Mathf.Clamp(mousePos.x, Screen.width * ResizeScreenMargin, Screen.width * (1f - ResizeScreenMargin));
         mousePos.y = Mathf.Clamp(mousePos.y, Screen.height * ResizeScreenMargin, Screen.height * (1f - ResizeScreenMargin));
         Vector2 mouseDelta = mousePos - resizeStartMousePos;
-        mouseDelta *= mouseMult;
+        mouseDelta *= Root.Instance.MouseMult;
 
         Vector2 newSize = resizeStartWindowSize;
         Vector2 newPos = resizeStartWindowAnchoredPos;

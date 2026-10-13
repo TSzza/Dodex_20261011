@@ -14,7 +14,7 @@ public class Root : MonoBehaviour
     public Audio_Controller audio_Controller;
     
     [HideInInspector]
-    public float MouseMult = 0.4f; // 由于1920*1080变成了 192*4的宽，变成了0.4倍
+    public float MouseMult { get; private set; } = 0.4f; // 由于1920*1080变成了 192*4的宽，变成了0.4倍
     [HideInInspector]
     public float DelaySet = 0f; // 玩家调试的声音延迟，需要存档
 
@@ -40,5 +40,13 @@ public class Root : MonoBehaviour
     private void OnApplicationQuit() // 退出时存档
     {
         data_Controller.Save_SaveData();
+    }
+
+
+
+    public void SetMouseMult(float value)
+    {
+        if (value > 0)
+            MouseMult = value;
     }
 }

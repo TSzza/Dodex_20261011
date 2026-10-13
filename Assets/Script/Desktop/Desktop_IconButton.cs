@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[SelectionBase]
 public class Desktop_IconButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     public Desktop_Manager desktop_Manager;
@@ -12,7 +13,6 @@ public class Desktop_IconButton : MonoBehaviour, IPointerDownHandler, IPointerUp
     public float doubleClickThreshold = 0.3f;
     public float DragScreenMargin = 0.2f; // ¿Î∆¡ƒª±ﬂ‘µ◊Ó–°æ‡¿Î
 
-    private float mouseMult;
     private float _lastClickTime;
     private int _clickCount;
     private bool _isDragging;
@@ -30,7 +30,6 @@ public class Desktop_IconButton : MonoBehaviour, IPointerDownHandler, IPointerUp
     private void Start()
     {
         desktop_Manager.PlaceUI(_rt, _rt.anchoredPosition);
-        mouseMult = Root.Instance.MouseMult;
     }
 
     // ∞¥œ¬
@@ -96,7 +95,7 @@ public class Desktop_IconButton : MonoBehaviour, IPointerDownHandler, IPointerUp
             mousePos.y = Mathf.Clamp(mousePos.y, Screen.height * DragScreenMargin, Screen.height * (1f - DragScreenMargin));
 
             Vector2 mouseDelta = mousePos - _dragStartMousePos;
-            mouseDelta *= mouseMult;
+            mouseDelta *= Root.Instance.MouseMult;
 
             Vector2 newAnchoredPos = _dragStartAnchoredPos + mouseDelta;
             _rt.anchoredPosition = newAnchoredPos;
