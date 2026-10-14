@@ -42,6 +42,8 @@ public class Data_Controller : MonoBehaviour
             Res.y = data.screenHeight;
             Full = data.fullScreen;
             Root.Instance.DelaySet = data.delaySet;
+            Root.Instance.audio_Controller.bgmVolumeMult = data.bgmVolume;
+            Root.Instance.audio_Controller.sfxVolumeMult = data.sfxVolume;
         }
         sys.SetResolution(Res.x, Res.y);
         sys.SetFullScreen(Full);
@@ -54,6 +56,8 @@ public class Data_Controller : MonoBehaviour
             screenHeight = Screen.height,
             fullScreen = (Screen.fullScreenMode != FullScreenMode.Windowed),
             delaySet = Root.Instance.DelaySet,
+            bgmVolume = Root.Instance.audio_Controller.bgmVolumeMult,
+            sfxVolume = Root.Instance.audio_Controller.sfxVolumeMult,
         };
         string json = JsonUtility.ToJson(data, prettyPrint: true);
         File.WriteAllText(SavePath, json, Encoding.UTF8);

@@ -23,8 +23,8 @@ public class DefaultPage_Manager : MonoBehaviour
     private float maxHeight;
 
     [Header("窗口位置边界（比例）")]
-    public float ResizeScreenMargin = 0.05f; // 离屏幕边缘最小距离
-    public float DragScreenMargin = 0.2f; // 离屏幕边缘最小距离
+    public float ResizeScreenMargin = 0.02f; // 离屏幕边缘最小距离
+    public float DragScreenMargin = 0.07f; // 离屏幕边缘最小距离
     
     [HideInInspector]
     public bool isMaximized = false;
@@ -40,24 +40,25 @@ public class DefaultPage_Manager : MonoBehaviour
     private Vector2 resizeStartMousePos;
     private Vector2 resizeStartWindowSize;
     private Vector2 resizeStartWindowAnchoredPos;
+    
+    protected Audio_Controller Audio;
+    protected System_Controller system_Controller;
 
     public enum ResizeDirection
     {
         Drag, Left, Right, Top, Bottom,
         TopLeft, TopRight, BottomLeft, BottomRight
     }
-
-    void Awake()
-    {
+	protected virtual void Start() // 设置最大值为最大化
+	{
         if (windowRect == null) windowRect = GetComponent<RectTransform>();
-
-        if (windowRect == null) return;
         OriPos = windowRect.anchoredPosition3D;
         OriWidth = windowRect.sizeDelta.x;
         OriHeight = windowRect.sizeDelta.y;
-    }
-	private void Start() // 设置最大值为最大化
-	{
+        
+        Audio = Root.Instance.audio_Controller;
+        system_Controller = Root.Instance.system_Controller;
+
         maxWidth = CanvasLayer_Manager.Instance.maximizeSize.x - 1;
         maxHeight = CanvasLayer_Manager.Instance.maximizeSize.y - 1;
 	}
@@ -102,7 +103,7 @@ public class DefaultPage_Manager : MonoBehaviour
     }
     #endregion
 
-    void Update()
+    protected virtual void Update()
     {
         if (isDraggingWindow)
         {

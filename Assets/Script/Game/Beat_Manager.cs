@@ -20,14 +20,25 @@ public class Beat_Manager : MonoBehaviour
 
     // 缓存上一帧的真实时间，用来增量计算
     private float _realTimeAcc;
+    private Audio_Controller Audio;
+    private Game_Controller game_Controller;
 
     void RecalcBeatInterval()
     {
         _secondsPerBeat = 60f / bpm;
     }
+	private void Start()
+	{
+        game_Controller = Root.Instance.game_Controller;
+        Audio = Root.Instance.audio_Controller;
+	}
 
-    void Update()
+	void Update()
     {
+        if (!game_Controller.isGaming)
+            return;
+
+
         RecalcBeatInterval();
         float offsetMs = Root.Instance.DelaySet;
         float offsetBeat = offsetMs / 1000f / _secondsPerBeat;
@@ -60,6 +71,7 @@ public class Beat_Manager : MonoBehaviour
                 var anim = target.GetComponent<Anim_Beat>();
                 if (anim != null)
                 {
+                    Audio.PlaySFX("beat"); // 播放音效
                     anim.Play();
                 }
             }

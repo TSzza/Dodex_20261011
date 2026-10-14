@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class UI_midImg : MonoBehaviour
 {
-    [Header("宽高比 宽/高，16:9")]
+    [Header("宽高比")]
     public float aspectRatio = 16f / 9f;
+    [Header("懒人模式")]
+    public bool autoSet = true;
 
     private RectTransform _selfRt;
     private RectTransform _parentRt;
@@ -15,6 +17,12 @@ public class UI_midImg : MonoBehaviour
         _selfRt.anchorMin = new Vector2(0.5f, 0.5f);
         _selfRt.anchorMax = new Vector2(0.5f, 0.5f);
         _selfRt.pivot = new Vector2(0.5f, 0.5f);
+
+        // 如果勾选自动，则把aspectRatio锁定为Awake读到的比值
+        if (autoSet)
+        {
+            aspectRatio = _selfRt.rect.width / _selfRt.rect.height;
+        }
     }
 
     void Update()
@@ -62,11 +70,14 @@ public class UI_midImg : MonoBehaviour
     //编辑器模式预览
     void OnValidate()
     {
-        _selfRt = GetComponent<RectTransform>();
-        if (transform.parent != null)
+        if (!autoSet)
         {
-            _parentRt = transform.parent.GetComponent<RectTransform>();
-            UpdateSize();
+            _selfRt = GetComponent<RectTransform>();
+            if (transform.parent != null)
+            {
+                _parentRt = transform.parent.GetComponent<RectTransform>();
+                UpdateSize();
+            }
         }
     }
 }

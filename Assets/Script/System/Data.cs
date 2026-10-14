@@ -27,6 +27,8 @@ namespace Data
         public bool fullScreen;
 
         public float delaySet;
+        public float bgmVolume;
+        public float sfxVolume;
     }
 
 

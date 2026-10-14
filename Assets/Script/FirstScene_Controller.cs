@@ -6,6 +6,8 @@ using System.Collections;
 
 public class FirstScene_Controller : MonoBehaviour
 {
+    // 用于控制最初Scene的加载与切换动画
+
     [Header("BKG_fore 淡入淡出参数")]
     public Image _bkgFore;
     public float foreWaitTime = 2f;

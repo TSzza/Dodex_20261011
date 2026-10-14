@@ -35,15 +35,19 @@ public class Anim_Line : MonoBehaviour
     public float _waveOffset;
     private float _glitchOffset;
     private float _subtleOffset;
-
+    private float lineWidthDefault;
     void Awake()
     {
         _lr = GetComponent<LineRenderer>();
+        lineWidthDefault = _lr.startWidth;
         RegenerateLine();
     }
 
     void Update()
     {
+        // 根据父物体放缩线宽
+        _lr.startWidth = _lr.endWidth = lineWidthDefault * transform.parent.localScale.x;
+
         // 三层噪声独立时间偏移，各自滚动
         _waveOffset += Time.deltaTime * waveScrollSpeed;
         _glitchOffset += Time.deltaTime * glitchScrollSpeed;

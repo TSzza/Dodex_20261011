@@ -19,14 +19,21 @@ public class Audio_Controller : MonoBehaviour
         public AudioClip clip;
     }
 
-    [SerializeField] private List<AudioClipEntry> bgmList;
-    [SerializeField] private List<AudioClipEntry> sfxList;
+    public List<AudioClipEntry> bgmList;
+    public List<AudioClipEntry> sfxList;
     [SerializeField][Min(0f)] private float bgmFadeDuration = 1.0f; // 音乐渐入渐出
 
-    [SerializeField]private AudioSource bgmSource;
-    [SerializeField]private AudioSource sfxSource;
-
-    private float bgmTargetVolume;
+    public AudioSource bgmSource;
+    public AudioSource sfxSource;
+    
+    private float bgmTargetVolume=0.5f;
+    private float sfxTargetVolume=1f;
+    [Header("玩家调节的音量")]
+    public float bgmVolumeMult=0.5f;
+    public float sfxVolumeMult=1f;
+    public bool isChangingBGM = false;
+    public int nowBGMIndex;
+    public string nextBGMName;
     private Coroutine bgmFadeCoroutine;
 
     public void PlayBGM(string clipName)
@@ -37,12 +44,14 @@ public class Audio_Controller : MonoBehaviour
             Debug.LogWarning($"BGM：找不到名为【{clipName}】的音频");
             return;
         }
+        nowBGMIndex = bgmList.FindIndex(item => item.clipName == clipName);
 
         // 停止正在进行的渐变
         if (bgmFadeCoroutine != null)
         {
             StopCoroutine(bgmFadeCoroutine);
         }
+        nextBGMName = clipName;
         bgmFadeCoroutine = StartCoroutine(CoroutineFadeBGM(entry.clip));
     }
     public void StopBGM()
@@ -50,14 +59,21 @@ public class Audio_Controller : MonoBehaviour
         if (bgmFadeCoroutine != null)
         {
             StopCoroutine(bgmFadeCoroutine);
+            isChangingBGM = false;
         }
         bgmFadeCoroutine = StartCoroutine(CoroutineFadeBGM(null));
     }
-
-    public void SetBgmVolume(float volume)
+    
+    public void SetBgmVolumeMult(float volume)
     {
-        bgmTargetVolume = Mathf.Clamp01(volume);
-        bgmSource.volume = bgmTargetVolume;
+        bgmVolumeMult = Mathf.Clamp01(volume);
+        if (!isChangingBGM)
+            bgmSource.volume = bgmVolumeMult;
+    }
+    public void SetSfxVolumeMult(float volume)
+    {
+        sfxVolumeMult = Mathf.Clamp01(volume);
+        sfxSource.volume = sfxVolumeMult;
     }
 
     public void PlaySFX(string clipName)
@@ -71,13 +87,10 @@ public class Audio_Controller : MonoBehaviour
         sfxSource.PlayOneShot(entry.clip);
     }
 
-    public void SetSfxVolume(float volume)
-    {
-        sfxSource.volume = Mathf.Clamp01(volume);
-    }
-
     private IEnumerator CoroutineFadeBGM(AudioClip nextClip)
     {
+        isChangingBGM = true;
+
         // 第一步：渐出当前BGM
         float startVol = bgmSource.volume;
         float timePass = 0f;
@@ -90,6 +103,7 @@ public class Audio_Controller : MonoBehaviour
         }
         bgmSource.volume = 0f;
         bgmSource.Stop();
+        isChangingBGM = false;
 
         // 如果有下一段BGM，加载并渐入
         if (nextClip != null)
@@ -101,10 +115,10 @@ public class Audio_Controller : MonoBehaviour
             {
                 timePass += Time.deltaTime;
                 float t = timePass / bgmFadeDuration;
-                bgmSource.volume = Mathf.Lerp(0f, bgmTargetVolume, t);
+                bgmSource.volume = Mathf.Lerp(0f, bgmTargetVolume*bgmVolumeMult, t);
                 yield return null;
             }
-            bgmSource.volume = bgmTargetVolume;
+            bgmSource.volume = bgmTargetVolume*bgmVolumeMult;
         }
     }
 }

@@ -8,7 +8,15 @@ public class CanvasLayer_Manager : MonoBehaviour
     public enum CanvasType
     {
         music,
-        dodex
+        dodex,
+        game,
+        setting,
+        fire,
+        gallery, // live streaming 内置在里面即可
+        email,
+        news,
+        word_0,
+        word_1,
     }
     public static CanvasLayer_Manager Instance { get; private set; }
     private void Awake()
@@ -90,7 +98,7 @@ public class CanvasLayer_Manager : MonoBehaviour
             CanvasLayerItem otheritem = _sortedCanvasList[i];
             if (otheritem.canvas != null)
             {
-                otheritem.canvas.sortingOrder = (i + 1)*10;
+                otheritem.canvas.sortingOrder = (i + 1)*100;
 			}
 		}
 

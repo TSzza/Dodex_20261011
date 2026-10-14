@@ -12,6 +12,7 @@ public class Root : MonoBehaviour
     public System_Controller system_Controller;
     public Data_Controller data_Controller;
     public Audio_Controller audio_Controller;
+    public Game_Controller game_Controller;
     
     [HideInInspector]
     public float MouseMult { get; private set; } = 0.4f; // 由于1920*1080变成了 192*4的宽，变成了0.4倍
