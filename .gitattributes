@@ -1,0 +1,153 @@
+# ============================================================================
+#  Dodex — Unity 2022.3.62f2c1 协作规范（.gitattributes）
+#
+#  三个目的：
+#   1) 场景 / Prefab / 材质等 Unity YAML 资源发生冲突时，走 UnityYAMLMerge
+#      做三方合并，而不是丢给队友手工对齐 GUID 和 m_Lines。
+#   2) 大体积二进制（本项目 Assets/Fonts 下有 6 个 33MB 的 TMP 字体图集）
+#      禁止文本 diff / 合并，否则一旦两边都打开过工程，文件会被写坏。
+#   3) 行尾统一 LF —— Unity 的 YAML 资源本来就该是 LF，避免 CRLF 噪音。
+#
+#  本文件需要 commit + push 才会对队友生效。
+#  另外每人还要在本机配一次 merge driver —— 见文件末尾注释。
+#
+#  ⚠️ 两条铁律（踩过坑，别改）：
+#   · 规则顺序 = 覆盖顺序，后写的赢。所以 "Assets/Fonts/** binary" 必须
+#     排在上面那些 "*.asset merge=unityyamlmerge" 的后面，否则字体被抢走。
+#   · 模式里绝对不能出现空格！空格是「模式 | 属性」的分隔符。
+#     要匹配含空格的文件名（如 "xxx SDF.asset"），只能用 "*" 通配；
+#     写成 "... SDF.asset" 会把**所有文件**都标成 binary。
+# ============================================================================
+
+# ---------- 兜底：由 git 自动判定文本性，行尾统一 LF ----------
+* text=auto eol=lf
+
+# ---------- Unity YAML 资源：允许自动三方合并 ----------
+# 这些都是 %YAML 1.1 文本资产，冲突时让 UnityYAMLMerge 按对象/字段合并
+*.unity              merge=unityyamlmerge eol=lf
+*.prefab             merge=unityyamlmerge eol=lf
+*.asset              merge=unityyamlmerge eol=lf
+*.mat                merge=unityyamlmerge eol=lf
+*.meta               merge=unityyamlmerge eol=lf
+*.controller         merge=unityyamlmerge eol=lf
+*.overrideController merge=unityyamlmerge eol=lf
+*.anim               merge=unityyamlmerge eol=lf
+*.mixer              merge=unityyamlmerge eol=lf
+*.playable           merge=unityyamlmerge eol=lf
+*.signal             merge=unityyamlmerge eol=lf
+*.preset             merge=unityyamlmerge eol=lf
+*.renderTexture      merge=unityyamlmerge eol=lf
+*.spriteatlas        merge=unityyamlmerge eol=lf
+*.spriteatlasv2      merge=unityyamlmerge eol=lf
+*.shadervariants     merge=unityyamlmerge eol=lf
+*.terrainlayer       merge=unityyamlmerge eol=lf
+*.physicMaterial     merge=unityyamlmerge eol=lf
+*.physicsMaterial2D  merge=unityyamlmerge eol=lf
+*.lighting           merge=unityyamlmerge eol=lf
+*.guiskin            merge=unityyamlmerge eol=lf
+*.fontsettings       merge=unityyamlmerge eol=lf
+*.vfx                merge=unityyamlmerge eol=lf
+*.vfxblock           merge=unityyamlmerge eol=lf
+*.vfxoperator        merge=unityyamlmerge eol=lf
+
+# ---------- 字体目录整体按二进制处理 ----------
+# 注意：Assets/Fonts 下有 "Font Chi Pixel/BoutiqueBitmap9x9_Bold_1.9 SDF.asset"
+# 这类文件名本身含空格，所以绝不能逐文件写模式（见文件头铁律 2）。
+# 这里用目录级通配（* 天然能匹配空格），一劳永逸覆盖所有层级与命名
+# （song.asset / Byte 4.asset 这些不含 "SDF" 的名字也一并覆盖）。
+# 必须排在 "*.asset" 之后，才能盖掉它的 merge 属性。
+Assets/Fonts/**      binary
+
+# ---------- 图片 / 贴图 / 光标 ----------
+*.png                binary
+*.PNG                binary
+*.jpg                binary
+*.jpeg               binary
+*.gif                binary
+*.bmp                binary
+*.tga                binary
+*.tif                binary
+*.tiff               binary
+*.psd                binary
+*.exr                binary
+*.hdr                binary
+*.dds                binary
+*.ktx                binary
+*.ktx2               binary
+*.astc               binary
+*.pvr                binary
+*.iff                binary
+*.pict               binary
+
+# ---------- 音频 ----------
+*.wav                binary
+*.mp3                binary
+*.ogg                binary
+*.aiff               binary
+*.m4a                binary
+*.flac               binary
+
+# ---------- 视频 ----------
+*.mp4                binary
+*.mov                binary
+*.webm               binary
+*.avi                binary
+*.m4v                binary
+
+# ---------- 字体 ----------
+# 正常都放在 Assets/Fonts 下（已被上面目录规则覆盖），
+# 这几条给「有人把字体丢到别处」兜底。
+*.ttf                binary
+*.TTF                binary
+*.otf                binary
+*.ttc                binary
+*.TTC                binary
+
+# ---------- 3D 模型 ----------
+*.fbx                binary
+*.FBX                binary
+*.obj                binary
+*.blend              binary
+*.blend1             binary
+*.blend1.meta        binary
+*.dae                binary
+*.max                binary
+*.3ds                binary
+
+# ---------- 二进制程序集 / 归档 ----------
+*.dll                binary
+*.so                 binary
+*.a                  binary
+*.lib                binary
+*.bundle             binary
+*.jar                binary
+*.aar                binary
+*.zip                binary
+*.7z                 binary
+*.rar                binary
+*.gz                 binary
+
+# ---------- 其他 ----------
+*.pdf                binary
+*.scenetemplate      binary
+
+# ---------- C# 用 C# 的 diff 规则（更好看的逐行差异）----------
+*.cs                 diff=csharp
+
+# ============================================================================
+#  每人本机配一次 SmartMerge driver（不进版本库，各机器路径不同）
+#
+#  UnityYAMLMerge 就装在编辑器里：
+#    F:/unity/2022.3.62f2c1/Editor/Data/Tools/UnityYAMLMerge.exe
+#
+#  在仓库根目录执行：
+#    git config merge.unityyamlmerge.name "Unity SmartMerge"
+#    git config merge.unityyamlmerge.driver '"F:/unity/2022.3.62f2c1/Editor/Data/Tools/UnityYAMLMerge.exe" merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"'
+#    git config merge.unityyamlmerge.recursive binary
+#
+#  把 --local 换成 --global 可对所有 Unity 工程生效。
+#  装在其他盘 / 其他版本时，只改上面那条路径即可。
+# ============================================================================
+
+# 队友的字体路径（Settings/Fonts）也必须整体按二进制 —— 后写者赢，必须放在最后
+Assets/Settings/Fonts/** binary

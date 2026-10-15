@@ -153,7 +153,7 @@ public class Game_Controller : MonoBehaviour
     public float lightUpHoldTime = 1.5f;
     public float lightUpFadeTime = 0.8f;
 
-    [Header("推动回弹")]
+    [Header("落点检测(推动回弹)")]
     public float pushRadius = 0.5f;
     public float pushDuration = 0.25f;
     public float pushMaxOffset = 0.08f;

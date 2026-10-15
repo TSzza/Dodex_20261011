@@ -37,16 +37,25 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Ambient: 0.05
+    - _Brightness: 3.2
     - _EnableExternalAlpha: 0
-    - _GlowIntensity: 4.08
+    - _FillStrength: 0.55
+    - _GlowIntensity: 3.89
+    - _LitAmount: 0
     - _PulseAmount: 0.35
     - _PulseSpeed: 0
     - _RimAlphaEdge: 0
     - _RimIntensity: 1.5
+    - _RimStrength: 0.55
     - _RimWidth: 0.12
+    - _TintInfluence: 0.25
     m_Colors:
+    - _AmbientColor: {r: 0.21999997, g: 0.29999998, b: 0.52, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _GlowColor: {r: 0, g: 0.044077396, b: 1, a: 1}
+    - _LitColor: {r: 0.39999998, g: 0.7, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 0.71, g: 0.83, b: 1, a: 1}
   m_BuildTextureStacks: []
