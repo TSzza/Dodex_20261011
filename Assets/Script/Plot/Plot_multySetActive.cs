@@ -24,5 +24,6 @@ public class Plot_multySetActive : Plot_Base
             }
         }
         yield return null;
+        Debug.Log("multySetActive End!");
     }
 }

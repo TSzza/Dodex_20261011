@@ -38,6 +38,8 @@ public class DefaultPage_button : MonoBehaviour
     // 给Unity Button的OnClick事件绑定这个函数
     public void OnClick()
     {
+        Root.Instance.audio_Controller.PlaySFX("bubble");
+
         CanvasLayer_Manager.CanvasType type = myCanvasType;
 
         switch (iconKind)

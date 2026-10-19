@@ -1,27 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 [SelectionBase]
 public class Plot_Base : MonoBehaviour
 {
-    private Plot_Editor parentPlot_Editor;
+    public Plot_Editor parentPlot_Editor;
 
     [Tooltip("是否正在执行剧情协程")]
-    public bool isPlaying { get; private set; }
+    public bool isPlaying;
     public bool hasPlayed;
+    public bool defaultTransparent = true;
 
     private Coroutine _plotCoroutine;
     
     public void Play()
     {
+        //Debug.Log(isPlaying.ToString());
         if (isPlaying)
         {
             Debug.LogWarning($"[{name}] 剧情正在运行，忽略本次Play调用");
             return;
         }
-
+        //Debug.LogWarning($"[{name}] 开始运行");
         _plotCoroutine = StartCoroutine(PlotCoroutineWrapper());
     }
 
@@ -37,13 +40,39 @@ public class Plot_Base : MonoBehaviour
     }
     protected virtual void Start()
     {
-        if (!transform.parent.TryGetComponent<Plot_Editor>(out parentPlot_Editor))
+
+        if (transform.parent == null)
         {
-            parentPlot_Editor = null;
+            Debug.LogError($"[{name}] No parent");
+        }
+        if (transform.parent.GetComponent<Plot_Editor>() == null)
+        {
+            Debug.LogWarning($"[{name}] No parent Plot editor");
         }
 
-        Image img = GetComponent<Image>();
-        img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
+        Transform current = transform.parent;
+        while (current != null)
+        {
+            if (current.TryGetComponent<Plot_Editor>(out Plot_Editor editor))
+            {
+                parentPlot_Editor = editor;
+                break;
+            }
+            current = current.parent; // 继续往上一层
+        }
+        if (parentPlot_Editor == null)
+        {
+            Debug.LogError($"[{name}] Plot editor Not Found");
+        }
+
+
+
+
+        if (defaultTransparent)
+        {
+            Image img = GetComponent<Image>();
+            img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
+        }
         // 不透明
         hasPlayed = false;
     }
@@ -57,10 +86,14 @@ public class Plot_Base : MonoBehaviour
     protected virtual void End()
     {
         isPlaying = false;
-        _plotCoroutine = null;
-        
-        Image img = GetComponent<Image>();
-        img.color = new Color(img.color.r, img.color.g, img.color.b, 0.2f);
+        //StopCoroutine(_plotCoroutine);
+        _plotCoroutine=null;
+
+        if (defaultTransparent)
+        {
+            Image img = GetComponent<Image>();
+            img.color = new Color(img.color.r, img.color.g, img.color.b, 0.2f);
+        }
         // 透明
         hasPlayed = true;
 
@@ -71,8 +104,18 @@ public class Plot_Base : MonoBehaviour
     // 协程包装
     private IEnumerator PlotCoroutineWrapper()
     {
+        // 临时新建一个迭代器实例，避免复用已被耗尽的 IEnumerator
+        IEnumerator plot = PlotCoroutine();
+
+        //Debug.Log($"[Plot] Wrapper 进入，isPlaying={isPlaying}，frame={Time.frameCount}，" +
+        //          $"plot 实例哈希={plot.GetHashCode()}，plot 类型={plot.GetType().Name}");
+
         isPlaying = true;
-        yield return PlotCoroutine();
+        //Debug.Log($"[Plot] isPlaying 已设为 true，准备 yield plot，frame={Time.frameCount}");
+
+        yield return plot;
+
+        //Debug.Log($"[Plot] plot 已结束，准备调用 End()，frame={Time.frameCount}");
         End();
     }
 

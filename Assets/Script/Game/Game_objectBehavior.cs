@@ -67,6 +67,7 @@ public class Game_objectBehavior : MonoBehaviour
         switch (myType)
         {
             case ObjectType.spawn: // 重设出生点
+                //Debug.Log(transform.position); // 
                 game_Controller.SetSpawnPos(transform.position);
                 break;
             default:
@@ -124,7 +125,13 @@ public class Game_objectBehavior : MonoBehaviour
     {
         if (_lightCoroutine != null)
             StopCoroutine(_lightCoroutine);
-        _lightCoroutine = StartCoroutine(LightUpCoroutine());
+        _lightCoroutine = StartCoroutine(LightUpCoroutine(false));
+    }
+    public virtual void LightUpEnd()
+    {
+        if (_lightCoroutine != null)
+            StopCoroutine(_lightCoroutine);
+        _lightCoroutine = StartCoroutine(LightUpCoroutine(true));
     }
     protected virtual void SetTransparent(float t)
     {
@@ -137,7 +144,7 @@ public class Game_objectBehavior : MonoBehaviour
             spr.color = c;
         }
     }
-    protected virtual IEnumerator LightUpCoroutine()
+    protected virtual IEnumerator LightUpCoroutine(bool isEnd)
     {
         List<SpriteRenderer> sprs = new List<SpriteRenderer>();
         GetComponentsInChildren<SpriteRenderer>(includeInactive: true, sprs);
@@ -162,21 +169,24 @@ public class Game_objectBehavior : MonoBehaviour
             }
             yield return null;
         }
-        // 保持
-        yield return new WaitForSeconds(lightUpHoldTime);
-        // 淡出
-        timer = 0;
-        while (timer < lightUpFadeTime)
+        if (!isEnd)
         {
-            timer += Time.deltaTime;
-            float t = Mathf.Clamp01(timer / lightUpFadeTime);
-            foreach (var kvp in originAlpha)
+            // 保持
+            yield return new WaitForSeconds(lightUpHoldTime);
+            // 淡出
+            timer = 0;
+            while (timer < lightUpFadeTime)
             {
-                Color c = kvp.Key.color;
-                c.a = Mathf.Lerp(1f, 0f, t);
-                kvp.Key.color = c;
+                timer += Time.deltaTime;
+                float t = Mathf.Clamp01(timer / lightUpFadeTime);
+                foreach (var kvp in originAlpha)
+                {
+                    Color c = kvp.Key.color;
+                    c.a = Mathf.Lerp(1f, 0f, t);
+                    kvp.Key.color = c;
+                }
+                yield return null;
             }
-            yield return null;
         }
     }
 

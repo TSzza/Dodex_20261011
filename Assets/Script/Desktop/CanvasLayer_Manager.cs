@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using static UnityEditor.Progress;
 
 public class CanvasLayer_Manager : MonoBehaviour
 {
@@ -76,6 +75,7 @@ public class CanvasLayer_Manager : MonoBehaviour
     /// </summary>
     public void Open(CanvasType targetType)
     {
+        //Debug.Log("Canvas0");
         //Debug.Log($"Open {targetType}");
 
         // 找到目标条目
@@ -87,6 +87,8 @@ public class CanvasLayer_Manager : MonoBehaviour
 
         // 激活目标Canvas
         item.canvas.gameObject.SetActive(true);
+
+        //Debug.Log("Canvas1");
 
         // 从原有列表移除，插入到末尾（最顶层）
         _sortedCanvasList.Remove(item);
@@ -101,7 +103,8 @@ public class CanvasLayer_Manager : MonoBehaviour
                 otheritem.canvas.sortingOrder = (i + 1)*100;
 			}
 		}
-
+        
+        //Debug.Log("Canvas2");
         
         if (item.BigButton != null)
             item.BigButton.SetActive(true);

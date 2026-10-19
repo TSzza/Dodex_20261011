@@ -96,9 +96,12 @@ public class EmailPage_Manager : DefaultPage_Manager
 			// 拼接光标
 			TypingText.text = displayedText + (showCursor ? "|" : "");
 
+			Debug.Log(processPoint);
 			// 进度满，开启发送按钮
 			if (processPoint >= 1f)
 			{
+				Debug.Log("AAA");
+
 				TypingText.text = TargetString;
 				EnterButton.interactable = true;
 			}

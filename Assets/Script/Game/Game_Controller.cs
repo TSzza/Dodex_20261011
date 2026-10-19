@@ -20,13 +20,74 @@ public class Game_Controller : MonoBehaviour
     public float moveDuration = 0.2f; // 移动耗时
     private bool isMoving = false; // 防止连续移动
     public float getRadius = 0.2f; // 夺旗/被怪抓到的范围
+    public Plot_Base nextLevelPlot;
+    public GameObject nowLevel;
     
     public void SetSpawnPos(Vector3 pos)
     {
         SpawnPos = pos;
+        SnapAllBehaviorsToGrid();
     }
+
+
+    public void SnapAllBehaviorsToGrid()
+    {
+        float tolerance = 0.15f;
+        if (nowLevel == null)
+        {
+            Debug.LogWarning("nowLevel为空！");
+            return;
+        }
+
+        List<Game_objectBehavior> targets = new List<Game_objectBehavior>();
+        GetAllChildrenRecursive(nowLevel.transform, ref targets);
+
+        foreach (var bh in targets)
+        {
+            Transform t = bh.transform;
+            Vector2 currentXY = new Vector2(t.position.x, t.position.y);
+            Vector2 originXY = new Vector2(SpawnPos.x, SpawnPos.y);
+
+            // 1. 计算相对SpawnPos的偏移
+            Vector2 delta = currentXY - originXY;
+
+            // 2. 算出最接近的网格整数倍数（GridPos）
+            float gridX = Mathf.Round(delta.x / GridSize) * GridSize;
+            float gridY = Mathf.Round(delta.y / GridSize) * GridSize;
+            Vector2 targetGridXY = originXY + new Vector2(gridX, gridY);
+
+            // 3. 当前点到目标网格点的距离
+            float dist = Vector2.Distance(currentXY, targetGridXY);
+
+            // 大于容差才移动
+            if (dist > tolerance)
+            {
+                // 移动到网格点，Z保持原样
+                t.position = new Vector3(targetGridXY.x, targetGridXY.y, t.position.z);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 递归遍历所有子物体，收集带Game_objectBehavior的组件
+    /// </summary>
+    private void GetAllChildrenRecursive(Transform root, ref List<Game_objectBehavior> resultList)
+    {
+        Game_objectBehavior comp = root.GetComponent<Game_objectBehavior>();
+        if (comp != null)
+        {
+            resultList.Add(comp);
+        }
+        foreach (Transform child in root)
+        {
+            GetAllChildrenRecursive(child, ref resultList);
+        }
+    }
+
+
     public void StartLevel() // 开始新关卡
     {
+        nextLevelPlot = null;
         isGaming = true;
         hasWon = false;
         Peo.transform.position = SpawnPos;
@@ -48,6 +109,12 @@ public class Game_Controller : MonoBehaviour
     public void WinLevelNext()
     {
         hasWon = true;
+        ForceResetLight();
+        nowLevel.transform.position = new Vector3(4000f, 0, 0);
+        if(nextLevelPlot != null)
+        {
+            nextLevelPlot.Play();
+        }
         Debug.Log("按下按钮，游戏正式结束！");
     }
     public void LoseLevel()
@@ -79,14 +146,16 @@ public class Game_Controller : MonoBehaviour
             }
 
             timer += Time.deltaTime;
-            if (textWin.activeSelf && timer >= 1f)
+            GameObject text = textWin;
+            if (!isWin) text = textLose;
+            if (text.activeSelf && timer >= 1f)
             {
-                textWin.SetActive(false);
+                text.SetActive(false);
                 timer = 0f;
             }
-            if (textWin.activeSelf && timer >= 0.6f)
+            if (!text.activeSelf && timer >= 0.6f)
             {
-                textWin.SetActive(true);
+                text.SetActive(true);
                 timer = 0f;
             }
             yield return null;
@@ -183,12 +252,12 @@ public class Game_Controller : MonoBehaviour
         if (score == Score.miss)
         {
             Audio.PlaySFX("miss");
-            ShootPeoLight(false); // 错误闪亮
+            ShootPeoLight(false,false); // 错误闪亮
             yield break;
         }
         else
         {
-            ShootPeoLight(true); // 立即闪亮
+            ShootPeoLight(true,false); // 立即闪亮
         }
 
         Vector3 startPos = Peo.transform.position;
@@ -196,6 +265,7 @@ public class Game_Controller : MonoBehaviour
 
         // 检测endPos位置是否存在2D碰撞体
         bool hitBlock = false;
+        bool hitEnemy = false;
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(endPos, pushRadius);
         foreach (Collider2D hitCollider in hitColliders)
         {
@@ -213,13 +283,25 @@ public class Game_Controller : MonoBehaviour
                         objBehavior.PushBounce(pushDir);
                         hitBlock = true;
                     }
+                    
+                    if (objBehavior.myType == ObjectType.enemy)
+                    {
+                        hitEnemy = true;
+                    }
                 }
             }
         }
+        //if (hitEnemy)
+        //{
+        //    LoseLevel();
+        //    Audio.PlaySFX("miss");
+        //    ShootPeoLight(false); // 错误闪亮
+        //    yield break;
+        //}
         if (hitBlock) // 运行一个代码后结束协程：让整个Game进行一次推动，非常有趣
         {
             Audio.PlaySFX("push");
-            ShootLights();
+            ShootLights(false);
 
             Vector3 baseWorldPos = transform.position;
             Vector2 pushDir = offset.sqrMagnitude > 1e-6f ? offset.normalized : Vector2.right;
@@ -284,7 +366,7 @@ public class Game_Controller : MonoBehaviour
         isMoving = false;
 
 
-        ShootLights(); // 成功移动之后再发射一次
+        ShootLights(false); // 成功移动之后再发射一次
         
         
         bool getFlag = false;
@@ -304,6 +386,7 @@ public class Game_Controller : MonoBehaviour
                     if (objBehavior.myType == ObjectType.enemy)
                     {
                         getFlag = false;
+                        getEnemy = true;
                     }
                 }
             }
@@ -312,9 +395,14 @@ public class Game_Controller : MonoBehaviour
         if (getFlag) // 获得物结算
         {
             WinLevel();
+            ShootLights(true);
+            ShootPeoLight(true,true); // 立即闪亮
         }
-        if (getEnemy)
+        if (getEnemy||hitEnemy)
         {
+            Audio.PlaySFX("miss");
+            ShootLights(false);
+            ShootPeoLight(false,false); // 错误闪亮
             LoseLevel();
         }
     }
@@ -326,7 +414,7 @@ public class Game_Controller : MonoBehaviour
     public float shootSpeed = 5f;      // 发射速度
     public float maxDistance = 10f;      // 发射速度
 
-    void ShootLights()
+    void ShootLights(bool isEnd)
     {
         if (lightParticleFBX == null)
         {
@@ -344,6 +432,7 @@ public class Game_Controller : MonoBehaviour
             return;
         }
 
+        if (isEnd) splitCount *= 3;
         float angleStep = 360f / splitCount;
 
         for (int i = 0; i < splitCount; i++)
@@ -360,7 +449,7 @@ public class Game_Controller : MonoBehaviour
             GameObject inst = Instantiate(lightParticleFBX, spawnPos, Quaternion.identity, lightParent);
             if (inst.TryGetComponent<Game_lightBehavior>(out var lightBehavior))
             {
-                lightBehavior.ShootLight(spawnPos, dir, shootSpeed, maxDistance);
+                lightBehavior.ShootLight(spawnPos, dir, shootSpeed, maxDistance,isEnd);
             }
             else
             {
@@ -396,7 +485,7 @@ public class Game_Controller : MonoBehaviour
     /// <summary>
     /// 启动灯光动画
     /// </summary>
-    public void ShootPeoLight(bool NotWrong)
+    public void ShootPeoLight(bool NotWrong,bool isEnd)
     {
         if (_lightAnimCoroutine != null)
         {
@@ -414,40 +503,57 @@ public class Game_Controller : MonoBehaviour
             wrongMult = 0.5f;
         }
 
-        _lightAnimCoroutine = StartCoroutine(LightAnimationCoroutine());
+        _lightAnimCoroutine = StartCoroutine(LightAnimationCoroutine(isEnd));
     }
 
-    protected IEnumerator LightAnimationCoroutine()
+    protected IEnumerator LightAnimationCoroutine(bool isEnd)
     {
         // 捕获当前实时灯光值 作为本次动画起点
         float startRadius = peoLight.pointLightOuterRadius;
         float startShadow = peoLight.shadowIntensity;
         float startIntensity = peoLight.intensity;
 
+
         float timer = 0f;
+        float endRadiusMult = 1f;
+        float endIntensityMult = 1f;
+        float endShadowMult = 1f;
+
+        float raisetime = peoLightRaiseTime;
+        if (isEnd)
+        {
+            raisetime *= 30f;
+            endRadiusMult *= 7f;
+            endIntensityMult *= 0.2f;
+            endShadowMult *= 0.5f;
+        }
+
         // 上升
-        while (timer < peoLightRaiseTime)
+        while (timer < raisetime)
         {
             timer += Time.deltaTime;
-            float t = Mathf.Clamp01(timer / peoLightRaiseTime);
-            SetLightLerp(t, startRadius, maxOuterRadius * wrongMult, startShadow, maxShadowStrength * wrongMult, startIntensity, maxIntensity * wrongMult);
+            float t = Mathf.Clamp01(timer / raisetime);
+            SetLightLerp(t, startRadius, maxOuterRadius * wrongMult * endRadiusMult, startShadow, maxShadowStrength * wrongMult*endShadowMult, startIntensity, maxIntensity * wrongMult*endIntensityMult);
             yield return null;
         }
 
-        // 保持
-        yield return new WaitForSeconds(peoLightHoldTime);
-
-        // 淡出
-        timer = 0f;
-        while (timer < peoLightFadeTime * wrongMult)
+        if (!isEnd)
         {
-            timer += Time.deltaTime;
-            float t = Mathf.Clamp01(timer / peoLightFadeTime);
-            SetLightLerp(t, maxOuterRadius * wrongMult, minOuterRadius, maxShadowStrength * wrongMult, minShadowStrength, maxIntensity * wrongMult, minIntensity);
-            yield return null;
-        }
+            // 保持
+            yield return new WaitForSeconds(peoLightHoldTime);
 
-        peoLight.color = RightColor;
+            // 淡出
+            timer = 0f;
+            while (timer < peoLightFadeTime * wrongMult)
+            {
+                timer += Time.deltaTime;
+                float t = Mathf.Clamp01(timer / peoLightFadeTime);
+                SetLightLerp(t, maxOuterRadius * wrongMult, minOuterRadius, maxShadowStrength * wrongMult, minShadowStrength, maxIntensity * wrongMult, minIntensity);
+                yield return null;
+            }
+
+            peoLight.color = RightColor;
+        }
     }
 
     // 泛用插值函数

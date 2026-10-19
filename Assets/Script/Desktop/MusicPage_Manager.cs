@@ -15,6 +15,8 @@ public class MusicPage_Manager : DefaultPage_Manager
         
 		foreach (var entry in Audio.bgmList) // …˙≥…“Ù¿÷∞¥≈•
         {
+            //Debug.Log(entry.clipName);
+
             GameObject newBtn = Instantiate(musButtonFBX, musButtonParent);
             
             Desktop_MusicButton btnComp = newBtn.GetComponent<Desktop_MusicButton>();

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4518796761100769660}
   - component: {fileID: 7278308708761565239}
   - component: {fileID: 5662262950902896048}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 6060797490718312850}
   - component: {fileID: 4287233984715082643}
   - component: {fileID: 1296770323113968265}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 7623174874536926418}
   - component: {fileID: 8915682965482394072}
   - component: {fileID: 5316932255606922768}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -298,8 +298,8 @@ GameObject:
   - component: {fileID: 972206440669689389}
   - component: {fileID: 6586977635592378127}
   - component: {fileID: 4807199705851005708}
-  - component: {fileID: 4127944921088021825}
-  m_Layer: 5
+  - component: {fileID: 2693371020155643857}
+  m_Layer: 7
   m_Name: Your letter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,7 +364,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4127944921088021825
+--- !u!114 &2693371020155643857
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -373,7 +373,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6844254158750279286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e24be4e48cebe44f9198229f2a696ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 419894b01cfbd91438d0ceedffdc4e9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 2928307845585935564}
@@ -389,7 +389,7 @@ GameObject:
   - component: {fileID: 3165677884168655088}
   - component: {fileID: 2353290320234011969}
   - component: {fileID: 2928307845585935564}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: time
   m_TagString: Untagged
   m_Icon: {fileID: 0}

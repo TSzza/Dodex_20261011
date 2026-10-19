@@ -10,6 +10,7 @@ public class Game_lightBehavior : MonoBehaviour
 
     private CircleCollider2D _circleCollider;
     private float _traveledDistance;
+    private bool isEnd;
 
     protected virtual void Awake()
     {
@@ -19,13 +20,20 @@ public class Game_lightBehavior : MonoBehaviour
             Debug.LogWarning($"[{name}] Game_lightBehavior 缺少CircleCollider2D组件");
         }
     }
-    public void ShootLight(Vector3 Pos,Vector2 Dir,float Speed,float MaxDistance)
+    public void ShootLight(Vector3 Pos,Vector2 Dir,float Speed,float MaxDistance,bool isend)
     {
         transform.position = Pos;
         moveDir = Dir.normalized; // 归一化
         moveSpeed = Speed;
         maxDistance = MaxDistance;
         _traveledDistance = 0f;
+        isEnd = isend;
+        if (isEnd)
+        {
+            this.transform.localScale *= 6;
+            moveSpeed /= 2;
+            maxDistance *= 4;
+        }
 
         if (moveDir.magnitude < Mathf.Epsilon || moveSpeed < Mathf.Epsilon || maxDistance < Mathf.Epsilon)
         {
@@ -71,12 +79,23 @@ public class Game_lightBehavior : MonoBehaviour
         switch (obj.myType)
         {
             case ObjectType.block:
-                obj.LightUp();
-                Destroy(gameObject);
+                if (!isEnd)
+                {
+                    obj.LightUp();
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    obj.LightUpEnd();
+                }
                 break;
             case ObjectType.tile:
             case ObjectType.flag:
-                obj.LightUp();
+            case ObjectType.enemy:
+                if (isEnd)
+                    obj.LightUpEnd();
+                else
+                    obj.LightUp();
                 break;
             case ObjectType.spawn: // 永不点亮
                 break;

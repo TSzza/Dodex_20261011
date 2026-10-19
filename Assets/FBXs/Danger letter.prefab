@@ -296,8 +296,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3100486337432337392}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e24be4e48cebe44f9198229f2a696ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 419894b01cfbd91438d0ceedffdc4e9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 0}
   wordText: {fileID: 8008345352585255145}
+  NotAutoTime: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Plot_Editor : MonoBehaviour
 {
+    public bool Lazy = false;
     public List<Plot_Base> plotNodes = new List<Plot_Base>();
     [Tooltip("当前执行索引")]
     public int Index = 0;
@@ -69,6 +70,9 @@ public class Plot_Editor : MonoBehaviour
         if (Index >= plotNodes.Count)
         {
             Debug.Log($"[{name}] 剧情序列全部播放完成");
+
+            Index = 0; // 重要！！这样就可以重播了
+
             return;
         }
         Plot_Base targetNode = plotNodes[Index];
@@ -84,8 +88,11 @@ public class Plot_Editor : MonoBehaviour
 
     public void PlayNext()
     {
-        Index++;
-        RunPlay();
+        if (!Lazy)
+        {
+            Index++;
+            RunPlay();
+        }
     }
 
     // ---------------------- 视觉处理 ---------------------- //

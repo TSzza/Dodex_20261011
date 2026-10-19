@@ -25,11 +25,12 @@ public class Audio_Controller : MonoBehaviour
 
     public AudioSource bgmSource;
     public AudioSource sfxSource;
+    public GameObject HomePageSfxSource;
     
     private float bgmTargetVolume=0.5f;
-    private float sfxTargetVolume=1f;
     [Header("玩家调节的音量")]
     public float bgmVolumeMult=0.5f;
+    public float bgmVolumeSingleMult=1f; //每一首都重新设置
     public float sfxVolumeMult=1f;
     public bool isChangingBGM = false;
     public int nowBGMIndex;
@@ -38,6 +39,7 @@ public class Audio_Controller : MonoBehaviour
 
     public void PlayBGM(string clipName)
     {
+        bgmVolumeSingleMult = 1f;
         AudioClipEntry entry = bgmList.Find(item => item.clipName == clipName);
         if (entry == null || entry.clip == null)
         {
@@ -68,12 +70,17 @@ public class Audio_Controller : MonoBehaviour
     {
         bgmVolumeMult = Mathf.Clamp01(volume);
         if (!isChangingBGM)
-            bgmSource.volume = bgmVolumeMult;
+            bgmSource.volume = bgmVolumeMult*bgmVolumeSingleMult;
     }
     public void SetSfxVolumeMult(float volume)
     {
         sfxVolumeMult = Mathf.Clamp01(volume);
         sfxSource.volume = sfxVolumeMult;
+        AudioSource[] audioSources = HomePageSfxSource.GetComponents<AudioSource>();
+        foreach (var source in audioSources)
+        {
+            source.volume = sfxVolumeMult;
+        }
     }
 
     public void PlaySFX(string clipName)
@@ -115,10 +122,10 @@ public class Audio_Controller : MonoBehaviour
             {
                 timePass += Time.deltaTime;
                 float t = timePass / bgmFadeDuration;
-                bgmSource.volume = Mathf.Lerp(0f, bgmTargetVolume*bgmVolumeMult, t);
+                bgmSource.volume = Mathf.Lerp(0f, bgmTargetVolume*bgmVolumeMult*bgmVolumeSingleMult, t);
                 yield return null;
             }
-            bgmSource.volume = bgmTargetVolume*bgmVolumeMult;
+            bgmSource.volume = bgmTargetVolume*bgmVolumeMult*bgmVolumeSingleMult;
         }
     }
 }

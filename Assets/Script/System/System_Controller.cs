@@ -42,4 +42,14 @@ public class System_Controller : MonoBehaviour
             Screen.fullScreenMode = FullScreenMode.Windowed;
         }
     }
+	private void Update()
+	{
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(Screen.fullScreenMode == FullScreenMode.FullScreenWindow)
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+            else
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+        }
+	}
 }

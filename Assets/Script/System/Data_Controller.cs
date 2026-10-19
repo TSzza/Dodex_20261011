@@ -27,6 +27,9 @@ public class Data_Controller : MonoBehaviour
         System_Controller sys = Root.Instance.system_Controller;
         Vector2Int Res = new Vector2Int(1920, 1080);
         bool Full = sys.DefaultFullscreen;
+        Root.Instance.DelaySet = 0;
+        Root.Instance.audio_Controller.bgmVolumeMult = 0.8f;
+        Root.Instance.audio_Controller.sfxVolumeMult = 0.8f;
 
         if (!File.Exists(SavePath))
         {

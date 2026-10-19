@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2109093111343013377}
   - component: {fileID: 6031798105662199690}
   - component: {fileID: 7036523683567974881}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,8 +145,8 @@ GameObject:
   - component: {fileID: 907309337260383911}
   - component: {fileID: 642077304057932716}
   - component: {fileID: 5610995697730819105}
-  - component: {fileID: 1710150752046911388}
-  m_Layer: 5
+  - component: {fileID: 4117223520237883819}
+  m_Layer: 7
   m_Name: Boss letter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1710150752046911388
+--- !u!114 &4117223520237883819
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3259248596976626396}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e24be4e48cebe44f9198229f2a696ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 419894b01cfbd91438d0ceedffdc4e9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 4809674402760684664}
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 6540725853907982090}
   - component: {fileID: 6785143838480955889}
   - component: {fileID: 4809674402760684664}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -370,7 +370,7 @@ GameObject:
   - component: {fileID: 4177406002692846037}
   - component: {fileID: 8915655454290646979}
   - component: {fileID: 8379030513477944670}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +445,7 @@ GameObject:
   - component: {fileID: 1627646501978210815}
   - component: {fileID: 1382164515161197660}
   - component: {fileID: 1233930872143472690}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
